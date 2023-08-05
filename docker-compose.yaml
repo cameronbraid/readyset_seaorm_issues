@@ -1,0 +1,34 @@
+version: "3"
+services:
+
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  readyset:
+    image: public.ecr.aws/readyset/readyset:beta-2023-07-26
+    ports:
+      - 3307:3307
+    volumes:
+      - ./data/readyset:/data
+    
+    command:
+      --standalone
+      --deployment=test
+      --database-type=mysql
+      --upstream-db-url=mysql://root:password@mysql:3306/db
+      --query-caching=in-request-path
+      --address=0.0.0.0:3307
+      --db-dir=/data
+      --username=user
+      --password=password
+      --log-level=DEBUG

@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["app", "entity", "migration"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+authors = ["Cameron <cameron@drivenow.com.au>"]
+
+[workspace.dependencies]
