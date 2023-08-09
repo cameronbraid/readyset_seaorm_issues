@@ -14,7 +14,7 @@ pub async fn db_connect() -> Connections {
 
     Connections {
         mysql: Database::connect({
-            let mut opt = ConnectOptions::new("mysql://user:password@localhost:3306/db".to_owned());
+            let mut opt = ConnectOptions::new("mysql://user:password@localhost:3306/db?ssl-mode=disabled".to_owned());
             opt.sqlx_logging_level(log::LevelFilter::Debug);
             opt
         })

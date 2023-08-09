@@ -21,12 +21,11 @@ async fn main() -> Result<()> {
         .await?;
 
         tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+        let item = has_decimal::Entity::find_by_id(1).one(&db.mysql).await?;
+        println!("item: {:?}", item);
+    } else {
+        println!("item: {:?}", item);
     }
-
-    let _item = has_decimal::Entity::find_by_id(1)
-        .one(&db.readyset)
-        .await?
-        .ok_or_else(|| color_eyre::eyre::eyre!("not found in readyset"))?;
 
     Ok(())
 }
