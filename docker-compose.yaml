@@ -9,6 +9,8 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
+    # command:
+    #   - --ssl=off
     ports:
       - '3306:3306'
     volumes:
@@ -31,4 +33,5 @@ services:
       --db-dir=/data
       --username=user
       --password=password
-      --log-level=DEBUG
+      --log-level=TRACE
+      --statement-logging

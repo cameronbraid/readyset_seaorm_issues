@@ -21,13 +21,64 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(HasDecimal::Price).decimal().null())
                     .to_owned(),
             )
-            .await
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Product::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(Product::Id)
+                            .integer()
+                            .not_null()
+                            .auto_increment()
+                            .primary_key(),
+                    )
+                    .col(ColumnDef::new(Product::Name).string().null())
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Order::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(Order::Id)
+                            .integer()
+                            .not_null()
+                            .auto_increment()
+                            .primary_key(),
+                    )
+                    // .col(ColumnDef::new(Product::Name).string().null())
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(ViewType::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(ViewType::ChannelId).integer().not_null())
+                    .col(ColumnDef::new(ViewType::ViewType).string().not_null())
+                    .col(ColumnDef::new(ViewType::Enabled).boolean().not_null())
+                    .primary_key(
+                        Index::create()
+                            .col(ViewType::ChannelId)
+                            .col(ViewType::ViewType),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager
-            .drop_table(Table::drop().table(HasDecimal::Table).to_owned())
-            .await
+        Ok(())
     }
 }
 
@@ -36,4 +87,25 @@ enum HasDecimal {
     Table,
     Id,
     Price,
+}
+
+#[derive(DeriveIden)]
+enum Product {
+    Table,
+    Id,
+    Name,
+}
+
+#[derive(DeriveIden)]
+enum Order {
+    Table,
+    Id,
+}
+
+#[derive(DeriveIden)]
+enum ViewType {
+    Table,
+    ChannelId,
+    ViewType,
+    Enabled,
 }
