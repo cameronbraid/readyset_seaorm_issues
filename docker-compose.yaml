@@ -33,5 +33,5 @@ services:
       --db-dir=/data
       --username=user
       --password=password
-      --log-level=TRACE
+      --log-level=DEBUG
       --statement-logging

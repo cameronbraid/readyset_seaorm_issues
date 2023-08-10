@@ -1,4 +1,4 @@
-use sea_orm_migration::prelude::*;
+use sea_orm_migration::{prelude::*, sea_orm::IdenStatic};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -57,7 +57,7 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        manager
+            manager
             .create_table(
                 Table::create()
                     .table(ViewType::Table)
@@ -74,6 +74,34 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
+        manager
+            .create_table(
+                Table::create()
+                    .table(ViewTypeBit::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(ViewTypeBit::ChannelId).integer().not_null())
+                    .col(ColumnDef::new(ViewTypeBit::ViewType).string().not_null())
+                    .col(ColumnDef::new(ViewTypeBit::Enabled).custom(ViewTypeBit::Bit1).not_null())
+                    .primary_key(
+                        Index::create()
+                            .col(ViewType::ChannelId)
+                            .col(ViewType::ViewType),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+
+        manager
+        .create_table(
+            Table::create()
+                .table(Channel::Table)
+                .if_not_exists()
+                .col(ColumnDef::new(Channel::Id).integer().not_null().primary_key().auto_increment())
+                .col(ColumnDef::new(Channel::Name).string().not_null())
+                .to_owned(),
+        )
+        .await?;
         Ok(())
     }
 
@@ -108,4 +136,22 @@ enum ViewType {
     ChannelId,
     ViewType,
     Enabled,
+}
+
+#[derive(DeriveIden)]
+enum ViewTypeBit {
+    Table,
+    ChannelId,
+    ViewType,
+    Enabled,
+    #[sea_orm(iden = "bit(1)")]
+    Bit1,
+}
+
+
+#[derive(DeriveIden)]
+enum Channel {
+    Table,
+    Id,
+    Name,
 }
